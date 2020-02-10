@@ -75,7 +75,7 @@
 <script>
 import axios from "axios";
 
-const apiURL = "http://localhost:5000/api/";
+const apiURL = "http://localhost:3000/api/";
 
 export default {
   data: function() {

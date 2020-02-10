@@ -1,8 +1,12 @@
 <template>
   <div id="app">
-    <Navigation />
+    <Navigation
+      v-bind:user="user"
+    />
     <router-view
-      v-bind:message="name"
+      @loggedIn="setUserData"
+      v-bind:user="user"
+      @addMeeting="addMeeting"
     />
   </div>
 </template>
@@ -13,32 +17,71 @@ import axios from "axios";
 // Components
 import Navigation from "./components/Navigation";
 
-const apiURL = "http://localhost:5000/api/";
+const apiURL = "http://localhost:3000/api";
 
 export default {
   name: 'App',
   data() {
     return {
-      name: "",
-      register: ""
+      user: null,
     }
   },
   components: {
     Navigation
   },
-  mounted: function() {
-    axios
-      .get(apiURL)
-      .then(result => this.name = result.data.name);
+  methods: {
+    setUserData: function(payload){
+      this.user = payload;
+    },
 
-    // axios
-    //   .post(apiURL + "register")
-    //   .then(result => this.register = result.data);
+    addMeeting: function(payload) {
+      const newMeeting = {
+        meetingName: payload,
+        meetingOwner: this.user.id
+      };
+
+      console.log(newMeeting);
+      // posting to api
+      let currentObj = this;
+      console.log("adding a meeting...");
+      axios
+        .post(apiURL + "/add/meeting", newMeeting)
+        .then(function (response) {
+                     console.log(response.data);
+                     if(currentObj.user !== null){
+                        axios
+                        .get(apiURL + `/meetings/${currentObj.user.id}`)
+                        .then( response => {
+                          console.log(response.data);
+                          currentObj.user.meetings = response.data;
+                        })
+                        .catch(function(err) {
+                          console.log(err);
+                        });
+                      }
+            })
+            .catch(function (err) {
+                console.log(err);
+                currentObj.apiError = err;
+            });
+    }
+  },
+  mounted() {
+    // if(this.user !== null){
+    //   axios
+    //   .get(apiURL + `/meetings/${this.user.id}`)
+    //   .then( response => {
+    //     console.log(response.data);
+    //   })
+    //   .catch(function(err) {
+    //     console.log(err);
+    //   });
+    // }
   }
 }
 </script>
 
 <style lang="scss">
-$primary: #05b2dd;
+$primary: #ad4ba2;
 @import "../node_modules/bootstrap/scss/bootstrap";
 </style>

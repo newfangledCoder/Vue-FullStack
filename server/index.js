@@ -16,7 +16,7 @@ const helpers = require('./utilities/helperFunctions');
 InitiateMongoServer();
 mongoose.Promise  = global.Promise;
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 3000;
 
 // Importing models
 require('./models/user');

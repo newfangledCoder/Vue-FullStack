@@ -5,8 +5,6 @@ const { check, validationResult} = require("express-validator/check");
 
 const { User, validateUser } = require("../models/user");
 
-//const User = mongoose.model('User');
-
 // Test Method
 exports.Test = (req, res) => {
     

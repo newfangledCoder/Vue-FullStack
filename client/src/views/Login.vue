@@ -50,7 +50,7 @@
 <script>
 import axios from "axios";
 
-const apiURL = "http://localhost:5000/api/";
+const apiURL = "http://localhost:3000/api/";
 
 export default {
     name: "login",
@@ -59,7 +59,6 @@ export default {
             email: "",
             password: "",
             error: "",
-            responseToken: null,
             user: null
         }
     },
@@ -70,27 +69,48 @@ export default {
         password: this.password
       };
       console.log("login button pressed...");
-      //console.log(userInfo);
-      //let currentObj = this;
+      
+      let currentObj = this;
 
       axios
         .post(apiURL + "login", userInfo)
         .then( response => {
-            console.log(response);
             return response.data.token;
         })
         .then(token => {
-            console.log(token);
 
             axios.get(apiURL + "user",{
-                        headers: {'token': token }
+                        headers: {'authToken': token }
                     })
                 .then(res => {
-                    console.log(res.data.name);
+                    //console.log(res);
+                    const userdata = {
+                      id: res.data._id,
+                      displayName: res.data.name,
+                      email: res.data.email,
+                      authToken: res.config.headers.authToken
+                    };
+                    return userdata;
+                })
+                .then(user => {
+                  if(user.authToken !== null || user.authToken !== "" || user.authToken !== undefined){
+                        axios
+                        .get(apiURL + `meetings/${user.id}`)
+                        .then( response => {
+                          console.log(response.data);
+                          user.meetings = response.data;
+                        })
+                        .catch(function(err) {
+                          console.log(err);
+                        });
+                    currentObj.$emit("loggedIn", user);
+                    currentObj.$router.push("/");
+                  }
                 })
         })
         .catch(function (err) {
-            console.log(err);
+            currentObj.error = err.response.data.message;
+            console.log(err.response);
         });
     }
   }
