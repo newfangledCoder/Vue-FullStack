@@ -58,8 +58,8 @@ export default {
         return {
             email: "",
             password: "",
-            error: "",
-            user: null
+            error: ""
+            //user: null
         }
     },
     methods: {
@@ -69,49 +69,54 @@ export default {
         password: this.password
       };
       console.log("login button pressed...");
+
+      this.$store
+              .dispatch("login", userInfo)
+              .then(() => this.$router.push("/"))
+              .catch(err => console.log(err));
       
-      let currentObj = this;
+      //let currentObj = this;
 
-      axios
-        .post(apiURL + "login", userInfo)
-        .then( response => {
-            return response.data.token;
-        })
-        .then(token => {
+      // axios
+      //   .post(apiURL + "login", userInfo)
+      //   .then( response => {
+      //       return response.data.token;
+      //   })
+      //   .then(token => {
 
-            axios.get(apiURL + "user",{
-                        headers: {'authToken': token }
-                    })
-                .then(res => {
-                    //console.log(res);
-                    const userdata = {
-                      id: res.data._id,
-                      displayName: res.data.name,
-                      email: res.data.email,
-                      authToken: res.config.headers.authToken
-                    };
-                    return userdata;
-                })
-                .then(user => {
-                  if(user.authToken !== null || user.authToken !== "" || user.authToken !== undefined){
-                        axios
-                        .get(apiURL + `meetings/${user.id}`)
-                        .then( response => {
-                          console.log(response.data);
-                          user.meetings = response.data;
-                        })
-                        .catch(function(err) {
-                          console.log(err);
-                        });
-                    currentObj.$emit("loggedIn", user);
-                    currentObj.$router.push("/");
-                  }
-                })
-        })
-        .catch(function (err) {
-            currentObj.error = err.response.data.message;
-            console.log(err.response);
-        });
+      //       axios.get(apiURL + "user",{
+      //                   headers: {'authToken': token }
+      //               })
+      //           .then(res => {
+      //               //console.log(res);
+      //               const userdata = {
+      //                 id: res.data._id,
+      //                 displayName: res.data.name,
+      //                 email: res.data.email,
+      //                 authToken: res.config.headers.authToken
+      //               };
+      //               return userdata;
+      //           })
+      //           .then(user => {
+      //             if(user.authToken !== null || user.authToken !== "" || user.authToken !== undefined){
+      //                   axios
+      //                   .get(apiURL + `meetings/${user.id}`)
+      //                   .then( response => {
+      //                     console.log(response.data);
+      //                     user.meetings = response.data;
+      //                   })
+      //                   .catch(function(err) {
+      //                     console.log(err);
+      //                   });
+      //               currentObj.$emit("loggedIn", user);
+      //               currentObj.$router.push("/");
+      //             }
+      //           })
+      //   })
+      //   .catch(function (err) {
+      //       currentObj.error = err.response.data.message;
+      //       console.log(err.response);
+      //   });
     }
   }
 }

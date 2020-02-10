@@ -109,17 +109,24 @@ export default {
         email: this.email,
         password: this.passOne
       };
-      let currentObj = this;
-    console.log("register button pressed...");
-      axios
-        .post(apiURL + "register", userInfo)
-        .then(function (response) {
-                    currentObj.result = response.data;
-            })
-            .catch(function (err) {
-                console.log(err);
-                currentObj.apiError = err;
-            });
+
+      //let currentObj = this;
+      console.log("register button pressed...");
+
+      this.$store
+              .dispatch("register", userInfo)
+              .then(() => this.$router.push("/"))
+              .catch(err => console.log(err));
+
+      // axios
+      //   .post(apiURL + "register", userInfo)
+      //   .then(function (response) {
+      //               currentObj.result = response.data;
+      //       })
+      //       .catch(function (err) {
+      //           console.log(err);
+      //           currentObj.apiError = err;
+      //       });
     }
   }
 }
