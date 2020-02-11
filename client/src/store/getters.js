@@ -1,4 +1,4 @@
 export default {
-  isLoggedIn: state => !!state.token,
+  isLoggedIn: state => state.status === 'success',
   authStatus: state => state.status
 }

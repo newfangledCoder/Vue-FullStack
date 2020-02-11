@@ -2,16 +2,20 @@
   <div id="app">
     <Navigation
       v-bind:user="user"
+      @logout="logout"
     />
     <router-view
-      @loggedIn="setUserData"
       v-bind:user="user"
+      v-bind:meetings="meetings"
+      @logout="logout"
       @addMeeting="addMeeting"
+      @deleteMeeting="deleteMeeting"
     />
   </div>
 </template>
 
 <script>
+import { mapState } from "vuex";
 import axios from "axios";
 
 // Components
@@ -23,60 +27,75 @@ export default {
   name: 'App',
   data() {
     return {
-      user: null,
+      meetings: []
     }
   },
   components: {
     Navigation
   },
-  methods: {
-    setUserData: function(payload){
-      this.user = payload;
+  computed: {
+    ...mapState([
+        'token',
+        'user'
+      ]
+    ),
+    isLoggedIn: function() {
+      return this.$store.getters.isLoggedIn;
     },
-
+  },
+  methods: {
+    logout: function() {
+        this.$store.dispatch("logout").then(() => {
+        this.$router.push("/login");
+      });
+    },
+    getMeetings: function() {
+      let currObj = this;
+      axios.get(apiURL + "/user/meetings/")
+      .then(resp => {
+        console.log(resp.data);
+        currObj.meetings = resp.data;
+      })
+      .catch(err => {
+        console.log(err);
+      });
+    },
     addMeeting: function(payload) {
       const newMeeting = {
-        meetingName: payload,
-        meetingOwner: this.user.id
-      };
+        meetingName: payload
+      }
 
-      console.log(newMeeting);
-      // posting to api
-      let currentObj = this;
-      console.log("adding a meeting...");
-      axios
-        .post(apiURL + "/add/meeting", newMeeting)
-        .then(function (response) {
-                     console.log(response.data);
-                     if(currentObj.user !== null){
-                        axios
-                        .get(apiURL + `/meetings/${currentObj.user.id}`)
-                        .then( response => {
-                          console.log(response.data);
-                          currentObj.user.meetings = response.data;
-                        })
-                        .catch(function(err) {
-                          console.log(err);
-                        });
-                      }
-            })
-            .catch(function (err) {
-                console.log(err);
-                currentObj.apiError = err;
-            });
+      axios.post(apiURL + "/add/meeting", newMeeting)
+        .then(resp => {
+          console.log(resp.data);
+        })
+        .catch(err => {
+          console.log(err);
+        });
+
+      // Getting all the meetings
+      this.getMeetings();
+    },
+    deleteMeeting: function(payload) {
+      console.log(payload);
+      axios.delete(apiURL + `/user/meetings/delete/${payload}`)
+        .then(resp => {
+          console.log(resp.data);
+        })
+        .catch()
+
+      this.getMeetings();
     }
   },
   mounted() {
-    // if(this.user !== null){
-    //   axios
-    //   .get(apiURL + `/meetings/${this.user.id}`)
-    //   .then( response => {
-    //     console.log(response.data);
+    console.log("mounted...")
+    // axios.get(apiURL + "/user/meetings/")
+    //   .then(resp => {
+    //     console.log(resp.data);
     //   })
-    //   .catch(function(err) {
+    //   .catch(err => {
     //     console.log(err);
     //   });
-    // }
   }
 }
 </script>

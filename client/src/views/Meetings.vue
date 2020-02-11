@@ -34,7 +34,7 @@
       </div>
     </div>
 
-    <div class="row justify-content-center" v-if="user.meetings">
+    <div class="row justify-content-center" v-if="user">
       <div class="col-11 col-md-8 col-lg-6">
         <div class="card border-top-0 rounded-0">
           <div class="card-body py-2">
@@ -43,8 +43,8 @@
           <div class="list-group list-group-flush">
             <div
               class="list-group-item d-flex"
-              v-for="item in user.meetings"
-              :key="item.id"
+              v-for="item in meetings"
+              :key="item._id"
             >
               <section
                 class="btn-group align-self-center"
@@ -54,7 +54,7 @@
                 <button
                   class="btn btn-sm btn-outline-secondary"
                   title="Delete Meeting"
-                  @click="$emit('deleteMeeting', item.id)"
+                  @click="$emit('deleteMeeting', item._id)"
                 >
                   <font-awesome-icon icon="trash"></font-awesome-icon>
                 </button>
@@ -62,7 +62,7 @@
                 <router-link
                   class="btn btn-sm btn-outline-secondary"
                   title="Check In"
-                  :to="'/checkin/' + user.uid + '/' + item.id"
+                  :to="'/checkin/' + user.id + '/' + item._id"
                 >
                   <font-awesome-icon icon="link"></font-awesome-icon>
                 </router-link>
@@ -70,7 +70,7 @@
                 <router-link
                   class="btn btn-sm btn-outline-secondary"
                   title="Attendees"
-                  :to="'/attendees/' + user.uid + '/' + item.id"
+                  :to="'/attendees/' + user.id + '/' + item._id"
                 >
                   <font-awesome-icon icon="list-ul"></font-awesome-icon>
                 </router-link>
@@ -91,7 +91,7 @@
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 export default {
   name: "meetings",
-  props: ["user"],
+  props: ["user", "meetings"],
   data: function() {
     return {
       meetingName: null

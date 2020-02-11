@@ -68,14 +68,13 @@
       or
       <router-link to="/login">login</router-link>
     </p>
-    <p>{{ result }}</p>
   </div>
 </template>
 
 <script>
-import axios from "axios";
+//import axios from "axios";
 
-const apiURL = "http://localhost:3000/api/";
+//const apiURL = "http://localhost:3000/api/";
 
 export default {
   data: function() {
@@ -84,9 +83,7 @@ export default {
       email: null,
       passOne: null,
       passTwo: null,
-      error: null,
-      result: null,
-      apiError: null
+      error: null
     };
   },
   watch: {
@@ -104,11 +101,11 @@ export default {
   },
   methods: {
     register: function() {
-      const userInfo = {
-        displayName: this.displayName,
-        email: this.email,
-        password: this.passOne
-      };
+        const userInfo = {
+          displayName: this.displayName,
+          email: this.email,
+          password: this.passOne
+        };
 
       //let currentObj = this;
       console.log("register button pressed...");
@@ -116,17 +113,10 @@ export default {
       this.$store
               .dispatch("register", userInfo)
               .then(() => this.$router.push("/"))
-              .catch(err => console.log(err));
-
-      // axios
-      //   .post(apiURL + "register", userInfo)
-      //   .then(function (response) {
-      //               currentObj.result = response.data;
-      //       })
-      //       .catch(function (err) {
-      //           console.log(err);
-      //           currentObj.apiError = err;
-      //       });
+              .catch(err => {
+                console.log(err);
+                this.error = err.message;
+              });
     }
   }
 }

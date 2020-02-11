@@ -1,9 +1,9 @@
 <template>
     <div class="mt-3">
     <div class="text-secondary text-center">
-      <div class="text-center" v-if="user">
+      <div class="text-center" v-if="user !== null && user !== undefined">
         Welcome back
-        <span class="font-weight-bold text-info">{{ user.displayName }}</span>
+        <span class="font-weight-bold text-info">{{ user.name }}</span>
         <a
           href="#"
           class="text-primary ml-2"
@@ -28,10 +28,10 @@
             <a href="https://firebase.google.com">Firebase</a>.
           </p>
 
-          <router-link class="btn btn-outline-primary mr-2" to="/register" v-if="!user">
+          <router-link class="btn btn-outline-primary mr-2" to="/register" v-if="user === null">
             Register
           </router-link>
-          <router-link class="btn btn-outline-primary mr-2" to="/login" v-if="!user">
+          <router-link class="btn btn-outline-primary mr-2" to="/login" v-if="user === null">
             Log In
           </router-link>
           <router-link class="btn btn-primary" to="/meetings" v-if="user">

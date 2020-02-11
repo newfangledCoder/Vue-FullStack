@@ -14,7 +14,7 @@ router.get('/api', usersController.Test);
 
 router.get('/api/user', auth, usersController.GetUser);
 
-router.get('/api/meetings/:ownerId', meetingsController.GetMeetingsByOwner)
+router.get('/api/user/meetings/', auth, meetingsController.GetMeetingsByOwner)
 
 
 // POST methods
@@ -23,10 +23,11 @@ router.post('/api/register', usersController.Register);
 
 router.post('/api/login', usersController.Login);
 
-router.post('/api/add/meeting', meetingsController.AddMeeting);
+router.post('/api/add/meeting', auth, meetingsController.AddMeeting);
 
 
-
+// DELETE methods
+router.delete('/api/user/meetings/delete/:meetingId', auth, meetingsController.DeleteMeeting);
 
 
 

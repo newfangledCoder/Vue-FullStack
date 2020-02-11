@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 
 // Importing model
 const { Meeting, validateMeeting } = require("../models/meeting"); 
+const {User} = require("../models/user");
 
 
 /**
@@ -10,9 +11,16 @@ const { Meeting, validateMeeting } = require("../models/meeting");
  * @description - User SignUp
  */
 exports.AddMeeting = async (req,res) => {
+  console.log("from controller---------->", req.user);
+  const ownerId = req.user.id;
+  const ownerExists = await User.exists({"_id": ownerId});
+  if(!ownerExists){
+    res.status(400).send();
+  }
+
   const newMeeting = {
       meetingName: req.body.meetingName,
-      meetingOwner: req.body.meetingOwner
+      meetingOwner: ownerId
   };
 
   const validationResult = validateMeeting(newMeeting);
@@ -81,10 +89,16 @@ exports.AddMeeting = async (req,res) => {
  * @param - /meetings
  */
 exports.GetMeetingsByOwner = async (req, res) => {
+  const ownerId = req.user.id;
+  const ownerExists = await User.exists({"_id": ownerId});
+  if(!ownerExists){
+    res.status(400).send();
+  }
+
   try {
           // request.user is getting fetched from Middleware after token authentication
           let meetings = [];
-          await Meeting.find({ 'meetingOwner': req.params.ownerId }, (err, docs) => {
+          await Meeting.find({ 'meetingOwner': ownerId }, (err, docs) => {
             if(err){
               res.status(401).send("Can not find documents");
             }
@@ -92,9 +106,37 @@ exports.GetMeetingsByOwner = async (req, res) => {
             meetings = docs;
           });
 
-          res.json(meetings);
+          res.status(200).send(meetings);
     }
     catch (e) {
       res.send({ message: "Error in Fetching user" });
+  }
+}
+
+/**
+ * @method - DELETE
+ * @description - Deletes a meeting
+ * @param - /user/delete/meeting
+ */
+exports.DeleteMeeting = async (req,res) => {
+  const ownerId = req.user.id;
+  const ownerExists = await User.exists({"_id": ownerId});
+  if(!ownerExists){
+    res.status(400).send();
+  }
+
+  try {
+    console.log("meeting id------------>", req.params);
+    const deletedMeeting = await Meeting.deleteOne({_id: req.params.meetingId}, (err, id) =>{
+      if(err){
+        res.status(400).send(err);
+      }
+      else{
+        res.status(200).send(id);
+      }
+    })
+  } 
+  catch (error) {
+    res.send({ message: "Error deleteing meeting" });
   }
 }

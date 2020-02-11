@@ -48,9 +48,9 @@
 </template>
 
 <script>
-import axios from "axios";
+//import axios from "axios";
 
-const apiURL = "http://localhost:3000/api/";
+//const apiURL = "http://localhost:3000/api/";
 
 export default {
     name: "login",
@@ -59,7 +59,6 @@ export default {
             email: "",
             password: "",
             error: ""
-            //user: null
         }
     },
     methods: {
@@ -73,7 +72,10 @@ export default {
       this.$store
               .dispatch("login", userInfo)
               .then(() => this.$router.push("/"))
-              .catch(err => console.log(err));
+              .catch(err => {
+                console.log(err);
+                this.error = err.message;
+              });
       
       //let currentObj = this;
 

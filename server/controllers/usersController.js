@@ -45,10 +45,10 @@ exports.Register = async (req,res) => {
 
     if(validationResult.error){
         const errorObject = {
-            name: "Error",
-            detail: validationResult.error
+            name: "error",
+            detail: validationResult.error.details[0].message
         }
-        res.json(errorObject);
+        res.status(400).send(errorObject);
     }
     else{
         const validatedNewUser = validationResult.value;
@@ -56,42 +56,45 @@ exports.Register = async (req,res) => {
 
         // database querry
         try {
-            let user = await User.findOne({
-                email
-            });
-            if (user) {
-                return res.status(400).json({
-                    msg: "User Already Exists"
+                let user = await User.findOne({
+                    email
                 });
-            }
-
-            user = new User(validatedNewUser);
-
-            const salt = await bcrypt.genSalt(10);
-            user.password = await bcrypt.hash(validatedNewUser.password, salt);
-
-            await user.save();
-
-            //sending response
-            const payload = {
-                user: {
-                    id: user.id
-                }
-            };
-
-            jwt.sign(
-                payload,
-                "randomString", {
-                    expiresIn: 10000
-                },
-                (err, token) => {
-                    if (err) throw err;
-                    res.status(200).json({
-                        token
+                if (user) {
+                    return res.status(400).json({
+                        msg: "User Already Exists"
                     });
                 }
-            );
-        }
+
+                user = new User(validatedNewUser);
+
+                const salt = await bcrypt.genSalt(10);
+                user.password = await bcrypt.hash(validatedNewUser.password, salt);
+
+                await user.save();
+
+                //sending response
+                jwt.sign(
+                    {id: user.id},
+                    "secret",
+                    {
+                        expiresIn: 18000
+                    },
+                    (err, token) => {
+                        if (err) throw err;
+                        res.status(200).send(
+                            { 
+                                auth: true, 
+                                token: token,
+                                user: {
+                                    id: user.id,
+                                    name: user.name,
+                                    email: user.email
+                                } 
+                            }
+                        )
+                    }
+                );
+            }
         catch (err) {
             console.log(err.message);
             res.status(500).send("Error in Saving");
@@ -125,23 +128,24 @@ exports.Login = async (req, res) => {
             });
         }
 
-        const payload = {
-            user: {
-                id: user.id
-            }
-        };
-
         jwt.sign(
-            payload,
+            {id: user.id},
             "secret",
             {
-                expiresIn: 5000
+                expiresIn: 18000
             },
             (err, token) => {
                 if (err) throw err;
-                res.status(200).json({
-                  token
-                });
+                res.status(200).send(
+                    { 
+                        auth: true, 
+                        token: token,
+                        user: {
+                            id: user.id,
+                            name: user.name,
+                            email: user.email
+                        } 
+                    })
               }
         );
     }
