@@ -106,6 +106,9 @@ export default {
       this.meetingName = null;
       this.$refs.meetingName.focus();
     }
+  },
+  mounted() {
+    this.$emit("callGetMeetings");
   }
 };
 </script>

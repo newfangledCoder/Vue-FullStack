@@ -25,7 +25,7 @@
             routing. It's a practical way to learn
             <a href="https://vuejs.org/">Vue.js</a>
             with
-            <a href="https://firebase.google.com">Firebase</a>.
+            <a href="https://www.mongodb.com">MongoDB</a>.
           </p>
 
           <router-link class="btn btn-outline-primary mr-2" to="/register" v-if="user === null">

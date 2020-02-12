@@ -10,6 +10,7 @@
       @logout="logout"
       @addMeeting="addMeeting"
       @deleteMeeting="deleteMeeting"
+      @callGetMeetings="getMeetings"
     />
   </div>
 </template>
@@ -64,38 +65,34 @@ export default {
       const newMeeting = {
         meetingName: payload
       }
-
+      let currObj = this;
       axios.post(apiURL + "/add/meeting", newMeeting)
         .then(resp => {
           console.log(resp.data);
         })
+        .then(() => {
+          currObj.getMeetings();
+        })
         .catch(err => {
           console.log(err);
         });
-
-      // Getting all the meetings
-      this.getMeetings();
     },
-    deleteMeeting: function(payload) {
-      console.log(payload);
+    deleteMeeting: async function(payload) {
+      //console.log(payload);
+      let currObj = this;
       axios.delete(apiURL + `/user/meetings/delete/${payload}`)
         .then(resp => {
-          console.log(resp.data);
+          console.log("deleted meeting-------> ",resp.data);
+        })
+        .then(() => {
+          currObj.getMeetings();
         })
         .catch()
 
-      this.getMeetings();
+
     }
   },
   mounted() {
-    console.log("mounted...")
-    // axios.get(apiURL + "/user/meetings/")
-    //   .then(resp => {
-    //     console.log(resp.data);
-    //   })
-    //   .catch(err => {
-    //     console.log(err);
-    //   });
   }
 }
 </script>
