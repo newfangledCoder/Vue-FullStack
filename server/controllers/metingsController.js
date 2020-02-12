@@ -126,7 +126,7 @@ exports.DeleteMeeting = async (req,res) => {
   }
 
   try {
-    console.log("meeting id------------>", req.params);
+    //console.log("meeting id------------>", req.params);
     const deletedMeeting = await Meeting.deleteOne({_id: req.params.meetingId}, (err, id) =>{
       if(err){
         res.status(400).send(err);
@@ -139,4 +139,41 @@ exports.DeleteMeeting = async (req,res) => {
   catch (error) {
     res.send({ message: "Error deleteing meeting" });
   }
+}
+
+exports.GetAllMeetings = async (req, res) => {
+  console.log("ALL THE MEETINGS........");
+
+  try {
+        let meetings = [];
+
+        await Meeting.aggregate([
+          { "$addFields": { "userId": { "$toObjectId": "$meetingOwner" }}},
+          { "$lookup": {
+            "from": "users",
+            "localField": "userId",
+            "foreignField": "_id",
+            "as": "owner"}
+          }],
+          (err, docs) => {
+            if(err){
+              res.status(401).send("Can not find documents");
+            }
+            //console.log(docs);
+            meetings = docs.map(function(x) {
+              return {
+                meetingName: x.meetingName,
+                id: x._id,
+                owner: x.owner[0].name,
+                meetingOwner: x.meetingOwner
+              }
+            })
+        });
+
+        res.status(200).send(meetings);
+  }
+    catch (e)
+    {
+      res.send({ message: "Error in Fetching user" });
+    }
 }

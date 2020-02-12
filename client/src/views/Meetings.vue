@@ -43,7 +43,7 @@
           <div class="list-group list-group-flush">
             <div
               class="list-group-item d-flex"
-              v-for="item in meetings"
+              v-for="item in userMeetings"
               :key="item._id"
             >
               <section
@@ -91,7 +91,7 @@
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 export default {
   name: "meetings",
-  props: ["user", "meetings"],
+  props: ["user", "userMeetings"],
   data: function() {
     return {
       meetingName: null

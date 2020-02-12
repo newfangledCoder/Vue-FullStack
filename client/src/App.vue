@@ -6,11 +6,13 @@
     />
     <router-view
       v-bind:user="user"
-      v-bind:meetings="meetings"
+      v-bind:allMeetings="allMeetings"
+      v-bind:userMeetings="userMeetings"
       @logout="logout"
       @addMeeting="addMeeting"
       @deleteMeeting="deleteMeeting"
-      @callGetMeetings="getMeetings"
+      @callGetMeetings="getMeetingsOfOwner"
+      @checkin="checkIn"
     />
   </div>
 </template>
@@ -28,7 +30,8 @@ export default {
   name: 'App',
   data() {
     return {
-      meetings: []
+      userMeetings: [],
+      allMeetings: []
     }
   },
   components: {
@@ -50,12 +53,23 @@ export default {
         this.$router.push("/login");
       });
     },
-    getMeetings: function() {
+    getAllMeetings: function() {
+      let currObj = this;
+      axios.get(apiURL + "/meetings")
+      .then(resp => {
+        console.log(resp.data);
+        currObj.allMeetings = resp.data;
+      })
+      .catch(err => {
+        console.log(err);
+      });
+    },
+    getMeetingsOfOwner: function() {
       let currObj = this;
       axios.get(apiURL + "/user/meetings/")
       .then(resp => {
         console.log(resp.data);
-        currObj.meetings = resp.data;
+        currObj.userMeetings = resp.data;
       })
       .catch(err => {
         console.log(err);
@@ -71,13 +85,13 @@ export default {
           console.log(resp.data);
         })
         .then(() => {
-          currObj.getMeetings();
+          currObj.getMeetingsOfOwner();
         })
         .catch(err => {
           console.log(err);
         });
     },
-    deleteMeeting: async function(payload) {
+    deleteMeeting: function(payload) {
       //console.log(payload);
       let currObj = this;
       axios.delete(apiURL + `/user/meetings/delete/${payload}`)
@@ -85,14 +99,30 @@ export default {
           console.log("deleted meeting-------> ",resp.data);
         })
         .then(() => {
-          currObj.getMeetings();
+          currObj.getMeetingsOfOwner();
         })
         .catch()
+    },
+    checkIn: function(payload) {
+      
+      const attendee = {
+        meetingId: payload.meetingID,
+        name: payload.displayName,
+        email: payload.email
+      }
 
-
+      axios.post(`${apiURL}/add/attendee`, attendee)
+        .then(resp => {
+          console.log(resp);
+        })
+        .catch(err => {
+          console.log(err);
+        })
     }
   },
   mounted() {
+    // getting all the meetings
+    this.getAllMeetings();
   }
 }
 </script>

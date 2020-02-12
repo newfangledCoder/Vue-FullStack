@@ -6,6 +6,7 @@ const auth = require("../middleware/auth");
 const { catchErrors } = require('../utilities/errorHandler');
 const usersController = require('../controllers/usersController');
 const meetingsController = require("../controllers/metingsController");
+const attendeeController = require("../controllers/attendeeController");
 
 
 // GET methods
@@ -16,6 +17,10 @@ router.get('/api/user', auth, usersController.GetUser);
 
 router.get('/api/user/meetings/', auth, meetingsController.GetMeetingsByOwner)
 
+router.get('/api/meetings', meetingsController.GetAllMeetings);
+
+router.get('/api/attendes', attendeeController.GetAllAttendees);
+
 
 // POST methods
 
@@ -24,6 +29,8 @@ router.post('/api/register', usersController.Register);
 router.post('/api/login', usersController.Login);
 
 router.post('/api/add/meeting', auth, meetingsController.AddMeeting);
+
+router.post('/api/add/attendee', attendeeController.AddAttendee);
 
 
 // DELETE methods
