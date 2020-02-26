@@ -43,6 +43,11 @@ const routes = [
       component: Attendees
     },
     {
+      path: "/attendees/:ownerID/:meetingID",
+      name: "attendees",
+      component: Attendees
+    },
+    {
       path: "*",
       redirect: "/"
     }

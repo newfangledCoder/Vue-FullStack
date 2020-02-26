@@ -18,11 +18,11 @@
         <div class="row justify-content-center">
           <div class="col-10 col-md-10 col-lg-8 col-xl-7">
             <h4 class="display-4 text-primary mb-2">Meeting Log</h4>
-            <table class="table table-hover mt-4">
+            <table class="table table-hover mt-4" v-if="allMeetings">
               <thead>
                 <tr>
                   <th class="lead font-weight-bold">Meeting Name</th>
-                  <th class="lead font-weight-bold">Meeting Owner</th>
+                  <th class="lead font-weight-bold">Meeting Host</th>
                   <th class="lead font-weight-bold">Meeting Room</th>
                   <th class="lead font-weight-bold">Checkin</th>
                 </tr>

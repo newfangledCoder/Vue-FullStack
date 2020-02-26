@@ -2,7 +2,9 @@
     <div>
     <nav class="site-nav navbar navbar-expand bg-primary navbar-dark">
       <div class="container-fluid">
-        <router-link class="navbar-brand" to="/">Meetings Logo</router-link>
+        <router-link class="navbar-brand" to="/">
+          <img src="../../public/Logo/MeetingLogo.png" height="62" width="62" />
+        </router-link>
         <div class="navbar-nav ml-auto">
           <router-link class="nav-item nav-link" to="/meetings" v-if="user !== null">
             Meetings
@@ -23,6 +25,7 @@
 </template>
 
 <script>
+
 export default {
     name: "navigation",
     props: ["user"]

@@ -38,22 +38,22 @@
     <div class="row justify-content-center">
       <div class="col-8 col-sm-6 col-md-4 col-lg-3 mb-2 p-0 px-1"
         v-for="item in filteredAttendees"
-        :key="item.id"
+        :key="item._id"
       >
         <div class="card">
           <div class="card-body px-3 py-2 d-flex align-items-center justify-content-center">
             <div class="btn-group pr-2"
               v-if="user != null"
             >
-              <button class="btn btn-sm"
+              <!-- <button class="btn btn-sm"
                 :class="[
                   item.star ? 'text-danger': '', 'btn-outline-secondary'
                 ]"
                 title="Give us a star"
-                @click="toggleStar(item.id)"
+                @click="toggleStar(item._id)"
               >
                 <font-awesome-icon icon="star"></font-awesome-icon>
-              </button>
+              </button> -->
               <a class="btn btn-sm btn-outline-secondary"
                 title="Send user an email"
                 :href="'mailto:' + item.email"
@@ -62,12 +62,12 @@
               </a>
               <button class="btn btn-sm btn-outline-secondary"
                 title="Delete Attendee"
-                @click="deleteAttendee(item.id)"
+                @click="deleteAttendee(item._id)"
               >
                 <font-awesome-icon icon="trash"></font-awesome-icon>
               </button>
             </div>
-            <div>{{ item.displayName }}</div>
+            <div>{{ item.name }}</div>
           </div>
         </div>
       </div>
@@ -102,7 +102,7 @@ export default {
         return this.displayAttendees;
       } else {
         const filteredData = item => {
-          return item.displayName
+          return item.name
             .toLowerCase()
             .match(this.searchQuery.toLowerCase());
         };
@@ -149,7 +149,7 @@ export default {
       let currObj = this;
       axios.get(apiURL + "/attendes")
       .then(resp => {
-        console.log(resp.data);
+        console.log("attendees------------------>",resp.data);
         currObj.attendees = resp.data;
         currObj.displayAttendees = currObj.attendees;
       })
@@ -159,24 +159,7 @@ export default {
     }
   },
   mounted() {
-    // db.collection("users")
-    //   .doc(this.userID)
-    //   .collection("meetings")
-    //   .doc(this.meetingID)
-    //   .collection("attendies")
-    //   .onSnapshot(snapshot => {
-    //     const snapData = [];
-    //     snapshot.forEach(doc => {
-    //       snapData.push({
-    //         id: doc.id,
-    //         email: doc.data().email,
-    //         displayName: doc.data().displayName,
-    //         star: doc.data().star
-    //       });
-    //     });
-    //     this.attendees = snapData;
-    //     this.displayAttendees = this.attendees;
-    //   });
+    // 
     this.getAllAttendee();
   }
 };
